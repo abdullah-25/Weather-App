@@ -49,6 +49,7 @@ export default function Home() {
       })
       .catch((err) => console.log(err));
   }, []);
+
   return (
     <div
       style={{
@@ -74,7 +75,7 @@ export default function Home() {
         </div>
 
         <div className="flex  items-center ">
-          <div className="flex  flex-wrap  md:space-x-4">
+          <div className="flex  flex-wrap justify-center md:space-x-4">
             {Object.entries(DayAndTemp).map(([day, temperature]) => (
               <WeatherDisplay key={day} day={day} temp={temperature} />
             ))}
