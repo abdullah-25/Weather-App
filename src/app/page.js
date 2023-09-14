@@ -1,18 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import styles from "./page.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import sunny from "../../public/sunny.svg";
+import WeatherDisplay from "@/components/WeatherDisplay/WeatherDisplay";
 
 export default function Home() {
   const [temp, setTemp] = useState("");
-  const [FiveDayTemp, setFiveDayTemp] = useState(Array(5).fill(null));
+  const [DayAndTemp, setDayAndTemp] = useState({});
 
-  function FiveDayHistoricalData(data) {
+  function FiveDayHistoricalData(data, time) {
     // Create an array to store the 5 values
     const tempArray = [];
+    const tempDays = [];
+    const FinalData = {};
 
     for (let i = 0; i < 5; i++) {
       // Calculate the index based on your logic
@@ -20,12 +22,18 @@ export default function Home() {
       if (data[index]) {
         tempArray.push(data[index]);
       }
+      if (time[index]) {
+        tempDays.push(time[index]);
+      }
+    }
+    for (let i = 0; i < tempDays.length; i++) {
+      FinalData[tempDays[i]] = tempArray[i];
+      console.log(FinalData);
     }
 
-    // Set the entire array in one go
-    setFiveDayTemp(tempArray);
+    setDayAndTemp(FinalData);
   }
-  console.log({ sunny });
+
   useEffect(() => {
     axios
       .get(
@@ -34,7 +42,10 @@ export default function Home() {
       .then((res) => {
         console.log(res.data);
         setTemp(res.data.hourly.temperature_2m[119]);
-        FiveDayHistoricalData(res.data.hourly.temperature_2m);
+        FiveDayHistoricalData(
+          res.data.hourly.temperature_2m,
+          res.data.hourly.time
+        );
       })
       .catch((err) => console.log(err));
   }, []);
@@ -48,24 +59,24 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      <div className="p-6 max-w-sm bg-white rounded-xl shadow-md flex flex-col items-center space-y-4">
-        <div className="flex-shrink-0">
+      <div className="p-6 bg-white rounded-xl shadow-md flex flex-col items-center space-y-4 md:space-y-10">
+        <div className="flex-shrink-0 ">
           <Image src={sunny} alt="Sunny" width={100} height={100} />
         </div>
-        <div className="flex space-x-2">
-          {" "}
+        <div className="flex flex-col items-center space-y-2 md:space-y-0 md:flex-row md:space-x-2">
           <div className="text-xl font-medium text-black">
             Current Temperature:
           </div>
           <div className="text-xl font-medium text-black">{temp}</div>
+          <button className="px-4 py-1 text-sm text-black font-semibold rounded-full border border-black-200">
+            Save
+          </button>
         </div>
 
-        <div className="flex flex-col items-center ">
-          <div className="flex space-x-4">
-            {FiveDayTemp.map((temp, i) => (
-              <div className="text-gray-500" id={i} key={i}>
-                {temp}
-              </div>
+        <div className="flex  items-center ">
+          <div className="flex  flex-wrap  md:space-x-4">
+            {Object.entries(DayAndTemp).map(([day, temperature]) => (
+              <WeatherDisplay key={day} day={day} temp={temperature} />
             ))}
           </div>
         </div>
