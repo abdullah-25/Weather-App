@@ -4,7 +4,6 @@ import windy from "../../../public/windy.svg";
 import cold from "../../../public/cold.svg";
 
 export default function WeatherDisplay({ day, temp }) {
-  console.log(typeof cold);
   function getDayNameFromDate(dateString) {
     const daysOfWeek = [
       "Sunday",
@@ -27,7 +26,7 @@ export default function WeatherDisplay({ day, temp }) {
 
   function DisplayIcon(temp) {
     let icon;
-    console.log(temp);
+
     if (temp <= 12) {
       icon = cold;
     } else if (temp <= 15) {
@@ -35,7 +34,7 @@ export default function WeatherDisplay({ day, temp }) {
     } else {
       icon = hot;
     }
-    console.log(icon);
+
     return icon;
   }
 
